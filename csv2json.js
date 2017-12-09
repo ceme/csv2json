@@ -1,34 +1,21 @@
 const fs = require('fs'),
   path = require('path'),
   csv = require('csvtojson'),
-  filePath = path.join(__dirname, 'data', 'customer-data.csv')
+  filePath = path.join(__dirname, 'data', 'customer-data.csv'),
+  jsonOutPath = path.join(__dirname, 'customer-data.json')
 
 fs.readFile(filePath, {encoding: 'utf-8'}, function(error,data){
     if (error) console.log(error);
 
-    csv({
-      colParser:{
-        "id":"string",
-        "first_name":"string",
-        "last_name":"string",
-        "email":"string",
-        "gender":"string",
-        "ip_address":"string",
-        "ssn":"string",
-        "credit_card":"string",
-        "bitcoin":"string",
-        "street_address":"string"
-      },
-      checkType:true
-    })
-    .fromString(data)
-    .on('json', (jsonObj) => {
-      console.log(jsonObj);
-    })
-    .on('done', ()=> {
+    let buffer = []
+
+    csv().fromString(data).on('json', (jsonObj) => {
+      buffer.push(jsonObj)
+    }).on('done', ()=> {
+      fs.writeFileSync(jsonOutPath, JSON.stringify(buffer))
       console.log("All done!")
-    })
-    .on('error', (error)=> {
+    }).on('error', (error)=> {
       console.log(`doh! there was an error: ${error}`)
     })
+
 });
