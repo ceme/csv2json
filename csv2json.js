@@ -4,13 +4,20 @@ const fs = require('fs'),
   filePath = path.join(__dirname, 'data', 'customer-data.csv'),
   jsonOutPath = path.join(__dirname, 'customer-data.json')
 
-    fs.readFile( filePath, {encoding: 'utf-8'}, async (error,data) => {
+    fs.readFile(filePath, {encoding: 'utf-8'}, async (error, data) => {
 
         if (error) console.log(error)
 
-        const jsonArray = await csv().fromString(data)
-    
-        fs.writeFileSync(jsonOutPath, JSON.stringify(jsonArray))
+        try {
+
+            const jsonArray = await csv().fromString(data)
+            fs.writeFileSync(jsonOutPath, JSON.stringify(jsonArray))
+
+	} catch (error) {
+
+            console.log(error)
+
+        }
 
         console.log("All done!")
 
